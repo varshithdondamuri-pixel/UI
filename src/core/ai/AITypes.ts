@@ -88,6 +88,8 @@ export interface AIProviderResponse {
   timestamp: number;
   status: 'success' | 'error' | 'fallback';
   errorMessage?: string;
+  /** True only when this response is a provider's simulated/canned output (no API key configured), not a real model call. */
+  simulated?: boolean;
 }
 
 export type ReasoningStageId = 'context_analysis' | 'planning' | 'creative_suggestions' | 'validation' | 'final_recommendation';

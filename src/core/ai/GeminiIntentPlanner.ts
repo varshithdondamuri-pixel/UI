@@ -1,6 +1,56 @@
 import { GeminiProvider } from './GeminiProvider';
 import { UIGenerationSpec, createDefaultUIGenerationSpec } from './UIGenerationSpec';
 
+/**
+ * Section list used when a response carries no `sections` of its own (the
+ * simulated GeminiProvider path always hits this, since its canned response
+ * has no sections field). Keyed by productType so the fallback stops handing
+ * every request the same generic [Navbar, Hero, ContentGrid] regardless of
+ * what was actually asked for — productType is already detected correctly
+ * from prompt keywords before this runs, it just wasn't being used here.
+ * Each `type` string here must resolve in SectionBuilders.resolveSectionKey.
+ */
+function fallbackSectionsForProductType(
+  productType: UIGenerationSpec['productType']
+): { type: string; purpose: string }[] {
+  switch (productType) {
+    case 'dashboard':
+      return [
+        { type: 'Sidebar', purpose: 'Primary Navigation' },
+        { type: 'Topbar', purpose: 'Page Header' },
+        { type: 'KpiRow', purpose: 'Key Metrics' },
+        { type: 'ChartArea', purpose: 'Trend Chart' },
+        { type: 'DataTable', purpose: 'Records Table' }
+      ];
+    case 'ecommerce':
+      return [
+        { type: 'Navbar', purpose: 'Navigation' },
+        { type: 'Hero', purpose: 'Hero Banner' },
+        { type: 'ProductGrid', purpose: 'Product Listing' },
+        { type: 'Cta', purpose: 'Call To Action' },
+        { type: 'Footer', purpose: 'Footer' }
+      ];
+    case 'landing_page':
+    case 'website':
+      return [
+        { type: 'Navbar', purpose: 'Navigation' },
+        { type: 'Hero', purpose: 'Hero Banner' },
+        { type: 'Features', purpose: 'Feature Highlights' },
+        { type: 'Cta', purpose: 'Call To Action' },
+        { type: 'Footer', purpose: 'Footer' }
+      ];
+    case 'mobile_app':
+    case 'form':
+      return [{ type: 'LoginForm', purpose: 'Login' }];
+    default:
+      return [
+        { type: 'Navbar', purpose: 'Navigation' },
+        { type: 'Hero', purpose: 'Hero Banner' },
+        { type: 'ContentGrid', purpose: 'Content' }
+      ];
+  }
+}
+
 export class GeminiIntentPlanner {
   private provider: GeminiProvider;
 
@@ -148,11 +198,9 @@ File: "${fileName || 'screenshot.png'}"`;
       productType,
       purpose: parsedJson.purpose || `Interface generation for ${prompt}`,
       pages: Array.isArray(parsedJson.pages) ? parsedJson.pages : ['Home'],
-      sections: Array.isArray(parsedJson.sections) ? parsedJson.sections : [
-        { type: 'Navbar', purpose: 'Navigation', order: 1 },
-        { type: 'Hero', purpose: 'Hero Banner', order: 2 },
-        { type: 'ContentGrid', purpose: 'Content', order: 3 }
-      ],
+      sections: Array.isArray(parsedJson.sections)
+        ? parsedJson.sections
+        : fallbackSectionsForProductType(productType).map((s, idx) => ({ ...s, order: idx + 1 })),
       components: Array.isArray(parsedJson.components) ? parsedJson.components : [
         { type: 'Navbar', purpose: 'Top Bar' },
         { type: 'HeroBanner', purpose: 'Hero Section' }

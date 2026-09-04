@@ -109,6 +109,8 @@ export class GeminiProvider implements AIProvider {
     const promptTokens = Math.floor(prompt.formattedPrompt.length / 4);
     const completionTokens = Math.floor(JSON.stringify(geminiJsonResponse).length / 4);
 
+    console.log(`[GeminiProvider] SIMULATED response (no API key configured) — requestId=${requestId}`);
+
     return {
       requestId,
       providerId: this.id,
@@ -119,7 +121,8 @@ export class GeminiProvider implements AIProvider {
       totalTokens: promptTokens + completionTokens,
       latencyMs: Date.now() - startTime,
       timestamp: Date.now(),
-      status: 'success'
+      status: 'success',
+      simulated: true
     };
   }
 }

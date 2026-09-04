@@ -2,9 +2,11 @@ import { BoundingBox, CanvasNode } from '../../../types';
 import { TypedEventBus } from '../../events/EventBus';
 import { SceneGraph } from '../../scene/SceneGraph';
 import { UIGenerationSpec } from '../../ai/UIGenerationSpec';
+import { GeminiIntentPlanner } from '../../ai/GeminiIntentPlanner';
 import { composeGenerationTree } from '../UIComposer';
 import { layoutGenerationTree } from '../GenerationLayoutEngine';
 import { emitGenerationTree } from '../GenerationEmitter';
+import { resolveSectionKey } from '../SectionBuilders';
 import { BoxedNode } from '../GenerationTree';
 import {
   generationReducer,
@@ -366,6 +368,60 @@ export function runGenerationStateMachineTest(): { success: boolean } {
       const trueCount = flags.filter(Boolean).length;
       assert(trueCount === 1, `status "${status}" must belong to exactly one of idle/busy/ready/failed — belongs to ${trueCount}`);
     }
+  }
+
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------------
+// GeminiIntentPlanner fallback sections (Task 6)
+//
+// GenerationPipeline's own test above stayed green through the productType-
+// blind fallback bug because it calls composeGenerationTree(spec) directly
+// with hand-built specs, never exercising GeminiIntentPlanner at all. This
+// covers the actual gap: parseAndValidateSpec's fallback branch (taken
+// whenever a response carries no `sections`, which is every simulated-
+// GeminiProvider response since there's no API key here) must pick a
+// section list that (a) actually varies by productType and (b) resolves
+// in SectionBuilders' registry. No network call: constructing
+// GeminiIntentPlanner only constructs a GeminiProvider instance, and
+// parseAndValidateSpec is a pure function over its arguments — sendRequest
+// is never invoked.
+// ---------------------------------------------------------------------------
+
+export function runGeminiFallbackSectionsTest(): { success: boolean } {
+  const planner = new GeminiIntentPlanner();
+  const productTypesToCheck: UIGenerationSpec['productType'][] = ['dashboard', 'ecommerce', 'landing_page', 'form'];
+
+  const sectionListsByType = new Map<string, string[]>();
+
+  for (const productType of productTypesToCheck) {
+    // An empty parsed response — no `sections` field — is exactly what the
+    // simulated GeminiProvider path hands this function, forcing the
+    // fallback branch under test.
+    const spec = planner.parseAndValidateSpec({}, `test prompt for ${productType}`, productType);
+
+    assert(spec.sections.length > 0, `[${productType}] fallback produced zero sections`);
+
+    spec.sections.forEach((section, idx) => {
+      const key = resolveSectionKey(section.type, productType);
+      assert(key !== null, `[${productType}] fallback section type "${section.type}" does not resolve in SectionBuilders' registry`);
+      assert(section.order === idx + 1, `[${productType}] fallback section "${section.type}" has order ${section.order}, expected ${idx + 1}`);
+    });
+
+    sectionListsByType.set(productType, spec.sections.map((s) => s.type));
+  }
+
+  // The whole point of the fix: different productTypes must not collapse
+  // back onto the same generic section list.
+  const seenSignatures = new Set<string>();
+  for (const [productType, types] of sectionListsByType) {
+    const signature = types.join(',');
+    assert(
+      !seenSignatures.has(signature),
+      `[${productType}] fallback section list ("${signature}") is identical to another productType's — the fallback is still productType-blind`
+    );
+    seenSignatures.add(signature);
   }
 
   return { success: true };

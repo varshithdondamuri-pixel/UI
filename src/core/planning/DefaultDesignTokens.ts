@@ -44,7 +44,12 @@ export const defaultDesignTokens: DesignTokenSchema = {
     secondary: '#6366f1',
     accent: '#f472b6',
     background: '#090d16',
-    surface: '#0f172a',
+    // Deliberately lighter than both the page background above and
+    // CanvasRenderer's hardcoded canvas fill (#0f172a) — a card/container
+    // surface identical to the canvas paints an invisible fill, leaving only
+    // strokes or child text visible. #1e293b (one slate step up) is what
+    // SemanticComponentRenderer's own generic-card fallback already assumes.
+    surface: '#1e293b',
     textPrimary: '#f8fafc',
     textSecondary: '#94a3b8',
     textMuted: '#64748b',

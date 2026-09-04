@@ -16,11 +16,19 @@ export class GeminiProvider implements AIProvider {
       maxTokenLimit: 1048576
     };
 
+    // Explicit constructor arg wins; otherwise fall back to the env var Vite
+    // exposes from .env (VITE_GEMINI_API_KEY). `as any` here is deliberate:
+    // this same file also runs under the plain-Node test runner (no Vite
+    // transform, so `import.meta.env` doesn't exist there), and the optional
+    // chain needs to survive that without throwing. Neither the constructor
+    // arg nor the env var is ever logged or surfaced in the UI — only used
+    // to build the outgoing fetch URL below.
+    const envApiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY as string | undefined;
     this.config = {
       id: this.id,
       name: this.name,
       type: 'gemini',
-      apiKey,
+      apiKey: apiKey ?? envApiKey ?? undefined,
       modelName: 'gemini-1.5-flash',
       capabilities: this.capabilities
     };

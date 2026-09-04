@@ -199,7 +199,17 @@ export const UIIntelligenceProductUI: React.FC<UIIntelligenceProductUIProps> = (
       const minY = n.position?.y ?? 0;
       return { minX, minY, maxX: minX + w, maxY: minY + h, width: w, height: h };
     });
-    viewportEngine.fitToScreen(bounds, { width: 1100, height: 460 });
+    // The canvas element itself isn't mounted yet at this point on a first
+    // generation (this runs before onOpenCanvas() switches views), so it
+    // can't be queried directly. The canvas fills the whole app viewport
+    // once it does mount (no layout that shrinks it), so window size is an
+    // accurate stand-in; prefer the real element on a retry, where the
+    // canvas view is already showing.
+    const canvasEl = document.querySelector('.canvas-element');
+    const containerSize = canvasEl
+      ? { width: canvasEl.clientWidth, height: canvasEl.clientHeight }
+      : { width: window.innerWidth, height: window.innerHeight };
+    viewportEngine.fitToScreen(bounds, containerSize);
   };
 
   /**

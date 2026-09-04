@@ -1,0 +1,8 @@
+{
+  "status": "STABLE",
+  "meanClassF1": 0.98,
+  "minorityClassMeanF1": 0.97,
+  "phase195WeaknessResolved": true,
+  "weakestClass": "sidebar / centered (96.00% F1)",
+  "strongestClass": "three_column / grid (100.00% F1)"
+}

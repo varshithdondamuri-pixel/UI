@@ -1,0 +1,5 @@
+{
+  "status": "BLOCKED",
+  "reason": "valid cross-dataset transfer requires task-specific retraining",
+  "simulated": false
+}

@@ -1,0 +1,22 @@
+{
+  "totalErrors": 100,
+  "byCategory": {
+    "sidebar_ambiguity": 28,
+    "centered_layout_ambiguity": 26,
+    "irregular_other_ambiguity": 22,
+    "stack_flow_ambiguity": 12,
+    "grid_vs_multi_column_ambiguity": 12
+  },
+  "byDataset": {
+    "RICO": 56,
+    "WebCode2M": 19,
+    "WebUI": 25
+  },
+  "byTrueClass": {
+    "sidebar": 28,
+    "centered": 26,
+    "other": 22,
+    "stack": 12,
+    "two_column": 12
+  }
+}

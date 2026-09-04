@@ -1,0 +1,13 @@
+{
+  "v01Accuracy": 0.7,
+  "v02Accuracy": 0.975,
+  "accuracyDelta": 0.275,
+  "v01MacroF1": 0.4705,
+  "v02MacroF1": 0.9754,
+  "macroF1Delta": 0.5049,
+  "v01WeightedF1": 0.6975,
+  "v02WeightedF1": 0.975,
+  "weightedF1Delta": 0.2775,
+  "predictionAgreement": 0.718,
+  "status": "IMPROVED"
+}

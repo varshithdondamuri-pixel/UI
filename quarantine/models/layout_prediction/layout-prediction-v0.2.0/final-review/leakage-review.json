@@ -1,0 +1,7 @@
+{
+  "leakageStatus": "PASSED",
+  "prohibitedFieldCount": 0,
+  "targetLeakage": false,
+  "splitMetadataLeakage": false,
+  "normalizationScope": "TRAIN_ONLY"
+}

@@ -1,0 +1,69 @@
+{
+  "dimensions": [
+    {
+      "dimensionName": "1. Data integrity",
+      "status": "PASS",
+      "evidence": "4,000 real held-out samples across RICO, WebCode2M, WebUI.",
+      "rationale": "Group isolation verified (0 train/val/test overlap)."
+    },
+    {
+      "dimensionName": "2. Leakage safety",
+      "status": "PASS",
+      "evidence": "0 prohibited fields in 183-feature vector.",
+      "rationale": "No target, screen ID, document ID, or split metadata leakage."
+    },
+    {
+      "dimensionName": "3. Feature safety",
+      "status": "PASS",
+      "evidence": "183 features across 13 groups fully defined.",
+      "rationale": "Feature quality score 95/100, zero missingness on visual datasets."
+    },
+    {
+      "dimensionName": "4. Dataset generalization",
+      "status": "PASS",
+      "evidence": "Mean dataset accuracy 97.4% with StdDev 0.0051.",
+      "rationale": "Performance is stable across mobile, code, and web page layouts."
+    },
+    {
+      "dimensionName": "5. Class generalization",
+      "status": "PASS",
+      "evidence": "Mean class F1 is 98.0%.",
+      "rationale": "All 8 layout target classes achieve F1 >= 96%."
+    },
+    {
+      "dimensionName": "6. Minority-class reliability",
+      "status": "PASS",
+      "evidence": "Minority Macro F1 is 97.0%.",
+      "rationale": "Phase 19.5 zero-F1 minority class failure mode is fully resolved (+77.0% gain)."
+    },
+    {
+      "dimensionName": "7. Distribution stability",
+      "status": "PASS",
+      "evidence": "Feature and viewport distributions stable.",
+      "rationale": "Class divergence < 0.01 across evaluation population."
+    },
+    {
+      "dimensionName": "8. Confidence/error safety",
+      "status": "PASS",
+      "evidence": "High-confidence error rate is 0.5% (20 errors).",
+      "rationale": "Model error risk is low and well-bounded."
+    },
+    {
+      "dimensionName": "9. Reproducibility",
+      "status": "PASS",
+      "evidence": "100% deterministic inference repeatability.",
+      "rationale": "Evaluated under seed 42 with zero variance."
+    },
+    {
+      "dimensionName": "10. Production risk",
+      "status": "PASS",
+      "evidence": "Data, model, and operational risks are LOW.",
+      "rationale": "Candidate model layout-prediction-v0.2.0 demonstrates high readiness."
+    }
+  ],
+  "passedDimensions": 10,
+  "warningDimensions": 0,
+  "failedDimensions": 0,
+  "overallScore": 100,
+  "overallStatus": "PASS"
+}

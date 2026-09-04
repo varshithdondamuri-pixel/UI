@@ -1,0 +1,136 @@
+{
+  "groupCells": [
+    {
+      "groupName": "geometry",
+      "featureCount": 15,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "spatial",
+      "featureCount": 12,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "alignment",
+      "featureCount": 14,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "spacing",
+      "featureCount": 12,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "density",
+      "featureCount": 10,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "composition",
+      "featureCount": 15,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "hierarchy",
+      "featureCount": 12,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "viewport",
+      "featureCount": 10,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "dom_structure",
+      "featureCount": 18,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "css_layout",
+      "featureCount": 20,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "responsive_structure",
+      "featureCount": 15,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "component_distribution",
+      "featureCount": 25,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    },
+    {
+      "groupName": "layout_structure",
+      "featureCount": 5,
+      "availability": 1,
+      "missingness": 0,
+      "datasetCoverage": 1,
+      "minorityClassCoverage": 1,
+      "unavailableValueCount": 0,
+      "structuralCoverage": 1
+    }
+  ],
+  "totalFeatureCount": 183,
+  "totalGroupCount": 13
+}

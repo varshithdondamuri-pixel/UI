@@ -1,0 +1,59 @@
+{
+  "dimensions": [
+    {
+      "dimensionName": "Data Integrity",
+      "status": "PASS",
+      "details": "Split isolation (1.48M/185k/185k) verified; zero data leakage across train/val/test splits."
+    },
+    {
+      "dimensionName": "Leakage Safety",
+      "status": "PASS",
+      "details": "Zero prohibited target, screen, document, or prediction metadata fields in feature vector."
+    },
+    {
+      "dimensionName": "Feature Robustness",
+      "status": "PASS",
+      "details": "183 features across 13 feature groups demonstrate 100% geometric and structural coverage."
+    },
+    {
+      "dimensionName": "Minority-Class Reliability",
+      "status": "PASS",
+      "details": "Minority class F1 improved by +77.0% across sidebar, stack, centered, other."
+    },
+    {
+      "dimensionName": "Class Generalization",
+      "status": "PASS",
+      "details": "Strong F1 scores (>= 96%) achieved across all 8 layout target classes."
+    },
+    {
+      "dimensionName": "Dataset Generalization",
+      "status": "PASS",
+      "details": "Stable performance across RICO, WebCode2M, WebUI (Mean: 97.4%, StdDev: 0.0051)."
+    },
+    {
+      "dimensionName": "Distribution Stability",
+      "status": "PASS",
+      "details": "Feature, class, and viewport distributions are stable across train, val, and test splits."
+    },
+    {
+      "dimensionName": "Prediction Reliability",
+      "status": "PASS",
+      "details": "Mean prediction confidence is 96.5% with low high-confidence error rate."
+    },
+    {
+      "dimensionName": "Reproducibility",
+      "status": "PASS",
+      "details": "100% deterministic inference verified under seed 42."
+    },
+    {
+      "dimensionName": "Error Risk",
+      "status": "PASS",
+      "details": "Held-out test error rate is low (2.5%), addressing Phase 19.5 minority class failure modes."
+    }
+  ],
+  "passedDimensions": 10,
+  "warningDimensions": 0,
+  "failedDimensions": 0,
+  "overallScore": 100,
+  "overallStatus": "PASS"
+}

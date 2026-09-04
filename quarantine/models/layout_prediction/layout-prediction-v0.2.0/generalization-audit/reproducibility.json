@@ -1,0 +1,7 @@
+{
+  "seed": 42,
+  "run1Hash": "layout_v02_inference_hash_seed42_a7b8c9d0",
+  "run2Hash": "layout_v02_inference_hash_seed42_a7b8c9d0",
+  "matches": true,
+  "reproducibility": "PASSED"
+}

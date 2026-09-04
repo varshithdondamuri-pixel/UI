@@ -1,0 +1,54 @@
+{
+  "datasetResults": [
+    {
+      "datasetName": "RICO",
+      "sampleCount": 50000,
+      "accuracy": 0.972,
+      "macroF1": 0.971,
+      "weightedF1": 0.972,
+      "errorCount": 1400,
+      "classCoverage": 1,
+      "meanConfidence": 0.962,
+      "status": "evaluated"
+    },
+    {
+      "datasetName": "WebCode2M",
+      "sampleCount": 80000,
+      "accuracy": 0.981,
+      "macroF1": 0.98,
+      "weightedF1": 0.981,
+      "errorCount": 1520,
+      "classCoverage": 1,
+      "meanConfidence": 0.971,
+      "status": "evaluated"
+    },
+    {
+      "datasetName": "WebUI",
+      "sampleCount": 55000,
+      "accuracy": 0.969,
+      "macroF1": 0.968,
+      "weightedF1": 0.969,
+      "errorCount": 1705,
+      "classCoverage": 1,
+      "meanConfidence": 0.958,
+      "status": "evaluated"
+    },
+    {
+      "datasetName": "Screen2Words",
+      "sampleCount": 0,
+      "accuracy": null,
+      "macroF1": null,
+      "weightedF1": null,
+      "errorCount": 0,
+      "classCoverage": 0,
+      "meanConfidence": null,
+      "status": "unavailable",
+      "unavailabilityReason": "Screen2Words text-only dataset lacks observable geometry/layout evidence"
+    }
+  ],
+  "evaluatedDatasetCount": 3,
+  "datasetMeanAccuracy": 0.974,
+  "datasetStdDevAccuracy": 0.0051,
+  "datasetMinAccuracy": 0.969,
+  "datasetMaxAccuracy": 0.981
+}

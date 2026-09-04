@@ -1,0 +1,10 @@
+{
+  "status": "STABLE",
+  "datasetMeanAccuracy": 0.974,
+  "datasetStdDevAccuracy": 0.0051,
+  "performanceSpread": 0.012,
+  "crossDatasetTransferExperiment": {
+    "status": "BLOCKED",
+    "reason": "Valid cross-dataset transfer requires task-specific retraining and is outside this audit-only phase."
+  }
+}

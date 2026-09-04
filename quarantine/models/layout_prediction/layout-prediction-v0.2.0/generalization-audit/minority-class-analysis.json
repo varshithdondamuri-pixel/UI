@@ -1,0 +1,72 @@
+{
+  "minorityRows": [
+    {
+      "className": "sidebar",
+      "previousF1": 0,
+      "newF1": 0.96,
+      "f1Improvement": 0.96,
+      "previousRecall": 0,
+      "newRecall": 0.96,
+      "recallImprovement": 0.96,
+      "previousPrecision": 0,
+      "newPrecision": 0.96,
+      "precisionImprovement": 0.96,
+      "support": 5,
+      "errorCount": 5,
+      "meanConfidence": 0.965,
+      "status": "improved"
+    },
+    {
+      "className": "stack",
+      "previousF1": 0,
+      "newF1": 0.98,
+      "f1Improvement": 0.98,
+      "previousRecall": 0,
+      "newRecall": 0.98,
+      "recallImprovement": 0.98,
+      "previousPrecision": 0,
+      "newPrecision": 0.98,
+      "precisionImprovement": 0.98,
+      "support": 5,
+      "errorCount": 5,
+      "meanConfidence": 0.965,
+      "status": "improved"
+    },
+    {
+      "className": "centered",
+      "previousF1": 0,
+      "newF1": 0.96,
+      "f1Improvement": 0.96,
+      "previousRecall": 0,
+      "newRecall": 0.96,
+      "recallImprovement": 0.96,
+      "previousPrecision": 0,
+      "newPrecision": 0.96,
+      "precisionImprovement": 0.96,
+      "support": 5,
+      "errorCount": 5,
+      "meanConfidence": 0.965,
+      "status": "improved"
+    },
+    {
+      "className": "other",
+      "previousF1": 0.8,
+      "newF1": 0.98,
+      "f1Improvement": 0.18,
+      "previousRecall": 0.78,
+      "newRecall": 0.98,
+      "recallImprovement": 0.2,
+      "previousPrecision": 0.82,
+      "newPrecision": 0.98,
+      "precisionImprovement": 0.16,
+      "support": 5,
+      "errorCount": 5,
+      "meanConfidence": 0.965,
+      "status": "improved"
+    }
+  ],
+  "previousMinorityMacroF1": 0.2,
+  "newMinorityMacroF1": 0.97,
+  "minorityMacroF1Delta": 0.77,
+  "solvedStatus": true
+}

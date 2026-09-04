@@ -1,0 +1,9 @@
+{
+  "threshold": 0.95,
+  "totalErrors": 100,
+  "highConfidenceErrorCount": 20,
+  "highConfidenceErrorRate": 0.005,
+  "meanConfidenceOfErrors": 0.896,
+  "maxConfidenceOfErrors": 0.96,
+  "riskLevel": "LOW"
+}

@@ -1,0 +1,18 @@
+{
+  "leakageStatus": "PASSED",
+  "prohibitedFeatureCount": 0,
+  "checkedFields": [
+    "targetLabel",
+    "labelConfidence",
+    "normalizedTarget",
+    "datasetIdentity",
+    "sourceDataset",
+    "sourceRecordId",
+    "screenId",
+    "documentId",
+    "splitMembership",
+    "evaluationOutcome",
+    "predictionResult",
+    "postOutcomeMetadata"
+  ]
+}

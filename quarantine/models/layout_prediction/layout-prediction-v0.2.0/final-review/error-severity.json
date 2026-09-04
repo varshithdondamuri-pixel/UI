@@ -1,0 +1,13 @@
+{
+  "minor": 66,
+  "moderate": 22,
+  "major": 12,
+  "critical": 0,
+  "percentages": {
+    "minor": 0.66,
+    "moderate": 0.22,
+    "major": 0.12,
+    "critical": 0
+  },
+  "criticalErrorPresent": false
+}

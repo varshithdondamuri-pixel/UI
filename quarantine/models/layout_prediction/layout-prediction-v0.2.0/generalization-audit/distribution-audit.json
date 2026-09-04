@@ -1,0 +1,8 @@
+{
+  "featureShiftScore": 0.012,
+  "classShiftScore": 0.005,
+  "datasetShiftScore": 0.008,
+  "viewportShiftScore": 0.01,
+  "minorityShiftScore": 0.007,
+  "distributionStatus": "STABLE"
+}

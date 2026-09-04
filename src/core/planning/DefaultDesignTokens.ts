@@ -53,7 +53,10 @@ export const defaultDesignTokens: DesignTokenSchema = {
     textPrimary: '#f8fafc',
     textSecondary: '#94a3b8',
     textMuted: '#64748b',
-    border: 'rgba(255, 255, 255, 0.1)',
+    // Bumped from 0.1 — against the now-lighter surface fill above, a 10%
+    // border read as almost nothing; this keeps cards edged but still subtle
+    // rather than the "heavy 1px box" look.
+    border: 'rgba(255, 255, 255, 0.16)',
     error: '#ef4444',
     warning: '#f59e0b',
     success: '#10b981'

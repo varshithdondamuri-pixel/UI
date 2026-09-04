@@ -222,7 +222,9 @@ export function buildFeatureGrid(_spec: UIGenerationSpec, tokens: DesignTokenSch
     role: 'feature-grid',
     kind: 'rect',
     layout: { direction: 'grid', columns: 3, gap: spacing.lg, padding: { top: 32, right: 32, bottom: 32, left: 32 } },
-    style: { fill: tokens.colors.background, stroke: 'transparent', strokeWidth: 0 },
+    // A step up from the raw page background so this band reads as distinct
+    // from whatever sits above/below it, instead of one flat wall of color.
+    style: { fill: tokens.colors.surface, stroke: 'transparent', strokeWidth: 0 },
     children: cards
   };
 }

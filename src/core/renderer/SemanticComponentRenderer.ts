@@ -61,20 +61,23 @@ export class SemanticComponentRenderer {
   private renderNavbar(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
+    const strokeWidth = node.strokeWidth || 1.5;
 
     ctx.save();
     // Glassmorphic background
-    ctx.fillStyle = '#0f172a';
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 12);
     ctx.fill();
     ctx.stroke();
 
     // Brand Logo Text
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = stroke;
     ctx.font = 'bold 18px Inter, sans-serif';
-    ctx.fillText('⚡ NEXUS STORE', x + 24, y + height / 2 + 6);
+    ctx.fillText(node.text || '⚡ NEXUS STORE', x + 24, y + height / 2 + 6);
 
     // Search Input Bar
     const searchX = x + 260;
@@ -119,16 +122,23 @@ export class SemanticComponentRenderer {
   private renderHero(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
+    const hasNodeFill = node.fill && node.fill !== 'transparent';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(56, 189, 248, 0.4)';
+    const strokeWidth = node.strokeWidth || 2;
 
     ctx.save();
-    // Gradient Background
-    const grad = ctx.createLinearGradient(x, y, x + width, y + height);
-    grad.addColorStop(0, '#0f172a');
-    grad.addColorStop(1, '#1e1b4b');
-
-    ctx.fillStyle = grad;
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-    ctx.lineWidth = 2;
+    // Background: the node's own fill when it has one, else the original
+    // two-stop hardcoded gradient.
+    if (hasNodeFill) {
+      ctx.fillStyle = node.fill;
+    } else {
+      const grad = ctx.createLinearGradient(x, y, x + width, y + height);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = grad;
+    }
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 16);
     ctx.fill();
     ctx.stroke();
@@ -148,7 +158,7 @@ export class SemanticComponentRenderer {
     // Hero Title
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.fillText('Next-Gen Wireless Experience', x + 40, y + 110);
+    ctx.fillText(node.text || 'Next-Gen Wireless Experience', x + 40, y + 110);
 
     // Hero Subtitle
     ctx.fillStyle = '#94a3b8';
@@ -217,12 +227,15 @@ export class SemanticComponentRenderer {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const label = node.metadata?.userLabel || 'Product Card';
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(244, 114, 182, 0.35)';
+    const strokeWidth = node.strokeWidth || 1.5;
 
     ctx.save();
     // Card Background Container
-    ctx.fillStyle = '#0f172a';
-    ctx.strokeStyle = 'rgba(244, 114, 182, 0.35)';
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 14);
     ctx.fill();
     ctx.stroke();
@@ -249,7 +262,8 @@ export class SemanticComponentRenderer {
     // Product Title
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 13px Inter, sans-serif';
-    const title = label.split('($')[0] || 'Premium Tech Accessory';
+    const titleSource = node.text || label;
+    const title = titleSource.split('($')[0] || 'Premium Tech Accessory';
     ctx.fillText(title.slice(0, 32), x + 14, y + imgH + 32);
 
     // Star Rating
@@ -312,18 +326,21 @@ export class SemanticComponentRenderer {
   private renderChartPanel(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
+    const strokeWidth = node.strokeWidth || 1.5;
 
     ctx.save();
-    ctx.fillStyle = '#0f172a';
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 14);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 15px Inter, sans-serif';
-    ctx.fillText('📊 Revenue & Traffic Analytics', x + 20, y + 34);
+    ctx.fillText(node.text || '📊 Revenue & Traffic Analytics', x + 20, y + 34);
 
     // Draw Chart Curve / Bar Series
     const chartY = y + 70;
@@ -363,18 +380,21 @@ export class SemanticComponentRenderer {
   private renderAuthFormCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#1e293b';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
+    const strokeWidth = node.strokeWidth || 2;
 
     ctx.save();
-    ctx.fillStyle = '#1e293b';
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 16);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = stroke;
     ctx.font = 'bold 24px Inter, sans-serif';
-    ctx.fillText('⚡ Welcome Back', x + 40, y + 55);
+    ctx.fillText(node.text || '⚡ Welcome Back', x + 40, y + 55);
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = '13px Inter, sans-serif';
@@ -387,13 +407,16 @@ export class SemanticComponentRenderer {
   private renderPricingCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
-    const label = node.metadata?.userLabel || 'Pricing Tier';
+    const label = node.text || node.metadata?.userLabel || 'Pricing Tier';
 
     ctx.save();
     const isPro = label.includes('Pro');
-    ctx.fillStyle = isPro ? '#1e1b4b' : '#1e293b';
-    ctx.strokeStyle = isPro ? '#6366f1' : 'rgba(255, 255, 255, 0.15)';
-    ctx.lineWidth = isPro ? 2 : 1;
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : (isPro ? '#1e1b4b' : '#1e293b');
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : (isPro ? '#6366f1' : 'rgba(255, 255, 255, 0.15)');
+    const strokeWidth = node.strokeWidth || (isPro ? 2 : 1);
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 14);
     ctx.fill();
     ctx.stroke();
@@ -429,12 +452,15 @@ export class SemanticComponentRenderer {
   private renderFeatureCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
-    const label = node.metadata?.userLabel || 'Feature Card';
+    const label = node.text || node.metadata?.userLabel || 'Feature Card';
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#1e293b';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(255, 255, 255, 0.1)';
+    const strokeWidth = node.strokeWidth || 1;
 
     ctx.save();
-    ctx.fillStyle = '#1e293b';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 12);
     ctx.fill();
     ctx.stroke();
@@ -458,18 +484,21 @@ export class SemanticComponentRenderer {
   private renderSidebarNav(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
+    const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
+    const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
+    const strokeWidth = node.strokeWidth || 1.5;
 
     ctx.save();
-    ctx.fillStyle = '#0f172a';
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = strokeWidth;
     this.drawRoundedRect(ctx, x, y, width, height, 12);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = stroke;
     ctx.font = 'bold 16px Inter, sans-serif';
-    ctx.fillText('⚡ APP WORKSPACE', x + 20, y + 45);
+    ctx.fillText(node.text || '⚡ APP WORKSPACE', x + 20, y + 45);
 
     const items = ['📊 Dashboard', '🎨 UI Builder', '🖼️ Templates', '📊 Analytics', '⚙️ Settings'];
     items.forEach((item, idx) => {

@@ -9,7 +9,7 @@ in this directory is the opposite: real RICO dataset input, a real
 scikit-learn model, a real grouped train/test split, and results reported
 with their limitations intact rather than smoothed over.
 
-Status: 4 planned models, 2 attempted so far. Being done session-by-session
+Status: 4 planned models, 3 attempted so far. Being done session-by-session
 per explicit user direction — this is not meant to look "finished."
 
 ## Model 1 of 4: Layout-type prediction — PARTIAL, documented below
@@ -166,6 +166,64 @@ finished model.
 or feature-importance analysis has been done — the 52% ceiling has not been
 probed to see if it moves with more features or more data.
 
-## Models 3–4 (visual style, UI understanding)
+## Model 3 of 4: Visual style — PARTIAL, documented below
+
+**Script:** `rico_visual_style.py`
+**Data:** 4,000 real RICO screenshots (`combined/<id>.jpg`, streamed out of
+the 6GB archive for the same screen IDs already sampled for models 1–2) +
+`app_details.csv`'s real Play Store `Category` field, joined by real
+package name.
+
+### What it does
+
+Real task: predict a screen's Play Store app category from its screenshot's
+visual appearance alone — color, brightness, saturation, contrast, edge
+density. Category is genuinely independent, real-world ground truth (not
+derived from the pixels being classified), so unlike model 1 there's no
+tautology risk to design around here.
+
+1. Labels: real `Category` field from `app_details.csv`, joined via each
+   screen's real package name. Categories with under 60 real samples are
+   bucketed into `other` (disclosed, not hidden — see the printed raw vs.
+   final distribution).
+2. Features: computed directly from the real JPGs — per-channel RGB
+   mean/std, mean/std saturation and brightness (HSV), a coarse 4×4×4 color
+   histogram signature, and an edge-density proxy (mean absolute pixel
+   gradient). No feature is looked up or templated.
+3. Split grouped by package name — essential here specifically, since the
+   label is an app-level property; an ungrouped split would let the same
+   app's other screens leak the answer directly.
+
+### Real run — 4,000 screenshots (3,755 with a matched category)
+
+```
+20 classes after bucketing (Entertainment 303 ... Comics 74)
+Train: 3,037 samples / 2,175 apps — Test: 718 samples / 544 apps
+App overlap between train/test: 0
+
+Accuracy: 0.1630
+Majority-class baseline ('Social' always): 0.0655
+Uniform-random baseline (20 classes): ~0.0500
+
+Best-performing classes: Weather (f1 0.39), News & Magazines (f1 0.40)
+Worst: Comics, Medical (f1 0.00 — model never predicts them correctly)
+```
+
+**Honest read:** 16.30% vs. a 6.55% majority baseline and a ~5% uniform
+random baseline is a real signal, roughly 2.5x better than always guessing
+the most common category — but the absolute number is low. Predicting an
+app's Play Store category from one screenshot's raw color/contrast/edge
+statistics alone is a hard, lossy task: two apps in very different
+categories can look visually similar, and 3,000 training samples across 20
+classes (~150/class) is thin for this kind of task. A couple of categories
+with visually distinctive palettes (Weather, News & Magazines) are picked up
+reasonably; most are closer to noise. This is a first honest pass on a
+genuinely hard problem, not a working style classifier.
+
+**Not done:** no image-level feature learning (e.g. a small CNN) was tried —
+only hand-computed pixel statistics. Not wired into `MLPredictionEngine`.
+Larger image sample (more than 4,000) not yet attempted.
+
+## Model 4 (UI understanding)
 
 Not started yet.

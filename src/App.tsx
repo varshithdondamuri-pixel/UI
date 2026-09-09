@@ -7,7 +7,8 @@ import { CanvasControls } from './components/CanvasControls';
 import { UIIntelligenceProductUI } from './components/UIIntelligenceProductUI';
 import { RecognitionDebugPanel } from './components/RecognitionDebugPanel';
 import { ToolKind } from './types';
-import { ArrowLeft, File } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { LogoIcon } from './components/LogoIcon';
 
 const ShortcutHandler: React.FC = () => {
   const { toolManager, historyEngine, selectionEngine } = useCore();
@@ -111,7 +112,7 @@ export const AppContent: React.FC = () => {
               <span>Back to UI Studio</span>
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
-              <File size={14} style={{ color: '#38bdf8' }} />
+              <LogoIcon size={16} />
               <span>UI</span>
             </div>
             <button

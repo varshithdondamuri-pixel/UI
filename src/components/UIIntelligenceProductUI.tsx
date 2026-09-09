@@ -1,5 +1,6 @@
 import React, { useReducer, useRef } from 'react';
 import { Sparkles, PenLine, ImageUp } from 'lucide-react';
+import { LogoIcon } from './LogoIcon';
 import { useCore } from '../hooks/useCore';
 import { CanvasNode } from '../types';
 import { SceneGraph } from '../core/scene/SceneGraph';
@@ -434,22 +435,23 @@ export const UIIntelligenceProductUI: React.FC<UIIntelligenceProductUIProps> = (
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif"
       }}
     >
-      {/* Logo / brand — the rest of the identity comes later */}
+      {/* Logo / brand — updated logo identity */}
       <header style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '28px 32px 8px' }}>
         <div
           style={{
             width: '40px',
             height: '40px',
             borderRadius: '11px',
-            background: 'linear-gradient(135deg, #38bdf8, #6366f1)',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 6px 18px rgba(56, 189, 248, 0.35)',
+            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.25)',
             flexShrink: 0
           }}
         >
-          <Sparkles size={20} color="#ffffff" />
+          <LogoIcon size={26} />
         </div>
         <span style={{ fontSize: '17px', fontWeight: 800, letterSpacing: '-0.3px' }}>UI INTELLIGENCE</span>
       </header>

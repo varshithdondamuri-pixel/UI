@@ -165,7 +165,7 @@ export class CanvasRenderer {
     switch (node.kind) {
       case 'rectangle': {
         if (node.metadata && (node.metadata.semanticLabel || node.metadata.userLabel)) {
-          this.semanticRenderer.renderSemanticNode(ctx, node);
+          this.semanticRenderer.renderSemanticNode(ctx, node, this.resolveDescendants(node));
         } else {
           ctx.beginPath();
           ctx.rect(node.position.x, node.position.y, node.size.width, node.size.height);
@@ -243,6 +243,26 @@ export class CanvasRenderer {
     }
 
     ctx.restore();
+  }
+
+  /**
+   * Flattens every descendant of `node` (not just direct children) into a
+   * single list, so semantic renderers can find real content — e.g. a
+   * navbar's cart-button label two levels down inside its nav-cta child —
+   * without needing to know the generated tree's exact nesting per role.
+   */
+  private resolveDescendants(node: CanvasNode): CanvasNode[] {
+    const result: CanvasNode[] = [];
+    const visit = (n: CanvasNode) => {
+      for (const childId of n.children) {
+        const child = this.sceneGraph.getNode(childId);
+        if (!child) continue;
+        result.push(child);
+        visit(child);
+      }
+    };
+    visit(node);
+    return result;
   }
 
   private drawSelectionOverlay(ctx: CanvasRenderingContext2D, node: CanvasNode, zoom: number): void {

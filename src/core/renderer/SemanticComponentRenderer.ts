@@ -1,24 +1,38 @@
 import { CanvasNode } from '../../types';
 
+/** First descendant whose semanticLabel matches `role` exactly (optionally also matching `kind`, to
+ *  disambiguate roles a container and one of its own children share, e.g. 'nav-cta' on both the
+ *  button rect and its label). */
+function findByRole(children: CanvasNode[], role: string, kind?: CanvasNode['kind']): CanvasNode | undefined {
+  return children.find((c) => c.metadata?.semanticLabel === role && (!kind || c.kind === kind));
+}
+
+function findAllByRole(children: CanvasNode[], role: string, kind?: CanvasNode['kind']): CanvasNode[] {
+  return children.filter((c) => c.metadata?.semanticLabel === role && (!kind || c.kind === kind));
+}
+
 export class SemanticComponentRenderer {
   /**
-   * Main entry point to render a CanvasNode as a rich, realistic semantic UI component
+   * Main entry point to render a CanvasNode as a rich, realistic semantic UI component.
+   * `children` is every descendant of `node` (flattened, not just direct children) — real
+   * generated content (brand text, headings, prices, ...) lives there, since `node` itself is
+   * usually a structural container with no `.text` of its own.
    */
-  public renderSemanticNode(ctx: CanvasRenderingContext2D, node: CanvasNode): boolean {
+  public renderSemanticNode(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[] = []): boolean {
     const role = (node.metadata?.semanticLabel || node.metadata?.userLabel || '').toLowerCase();
 
     if (role.includes('navbar') || role.includes('header')) {
-      this.renderNavbar(ctx, node);
+      this.renderNavbar(ctx, node, children);
       return true;
     }
 
     if (role.includes('hero')) {
-      this.renderHero(ctx, node);
+      this.renderHero(ctx, node, children);
       return true;
     }
 
     if (role.includes('product card') || role.includes('product')) {
-      this.renderProductCard(ctx, node);
+      this.renderProductCard(ctx, node, children);
       return true;
     }
 
@@ -28,12 +42,12 @@ export class SemanticComponentRenderer {
     }
 
     if (role.includes('chart')) {
-      this.renderChartPanel(ctx, node);
+      this.renderChartPanel(ctx, node, children);
       return true;
     }
 
     if (role.includes('login') || role.includes('auth') || role.includes('form')) {
-      this.renderAuthFormCard(ctx, node);
+      this.renderAuthFormCard(ctx, node, children);
       return true;
     }
 
@@ -43,12 +57,12 @@ export class SemanticComponentRenderer {
     }
 
     if (role.includes('feature card')) {
-      this.renderFeatureCard(ctx, node);
+      this.renderFeatureCard(ctx, node, children);
       return true;
     }
 
     if (role.includes('sidebar')) {
-      this.renderSidebarNav(ctx, node);
+      this.renderSidebarNav(ctx, node, children);
       return true;
     }
 
@@ -58,12 +72,17 @@ export class SemanticComponentRenderer {
   }
 
   // 1. NAVBAR / STORE HEADER RENDERER
-  private renderNavbar(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderNavbar(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
     const strokeWidth = node.strokeWidth || 1.5;
+
+    const brandText = node.text || findByRole(children, 'brand-logo')?.text || '⚡ NEXUS STORE';
+    const navLinks = findAllByRole(children, 'nav-link').map((c) => c.text).filter((t): t is string => !!t);
+    const linksText = navLinks.length > 0 ? navLinks.join('    ') : 'New Arrivals    Categories    Deals    Support';
+    const ctaText = findByRole(children, 'nav-cta', 'text')?.text || 'Cart (3)';
 
     ctx.save();
     // Glassmorphic background
@@ -77,7 +96,7 @@ export class SemanticComponentRenderer {
     // Brand Logo Text
     ctx.fillStyle = stroke;
     ctx.font = 'bold 18px Inter, sans-serif';
-    ctx.fillText(node.text || '⚡ NEXUS STORE', x + 24, y + height / 2 + 6);
+    ctx.fillText(brandText, x + 24, y + height / 2 + 6);
 
     // Search Input Bar
     const searchX = x + 260;
@@ -101,7 +120,7 @@ export class SemanticComponentRenderer {
     if (width > 900) {
       ctx.fillStyle = '#cbd5e1';
       ctx.font = '500 13px Inter, sans-serif';
-      ctx.fillText('New Arrivals    Categories    Deals    Support', linksX, y + height / 2 + 5);
+      ctx.fillText(linksText, linksX, y + height / 2 + 5);
     }
 
     // Cart & Account Badges
@@ -113,18 +132,22 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 12px Inter, sans-serif';
-    ctx.fillText('🛒 Cart (3)', cartX + 28, cartY + 24);
+    ctx.fillText(`🛒 ${ctaText}`, cartX + 28, cartY + 24);
 
     ctx.restore();
   }
 
   // 2. HERO SECTION RENDERER
-  private renderHero(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderHero(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const hasNodeFill = node.fill && node.fill !== 'transparent';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(56, 189, 248, 0.4)';
     const strokeWidth = node.strokeWidth || 2;
+
+    const heading = node.text || findByRole(children, 'hero-heading')?.text || 'Next-Gen Wireless Experience';
+    const subheading = findByRole(children, 'hero-subheading')?.text || 'Immersive acoustic clarity with active noise cancellation.';
+    const ctaText = findByRole(children, 'hero-cta', 'text')?.text || 'Shop Now →';
 
     ctx.save();
     // Background: the node's own fill when it has one, else the original
@@ -158,12 +181,12 @@ export class SemanticComponentRenderer {
     // Hero Title
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.fillText(node.text || 'Next-Gen Wireless Experience', x + 40, y + 110);
+    ctx.fillText(heading, x + 40, y + 110);
 
     // Hero Subtitle
     ctx.fillStyle = '#94a3b8';
     ctx.font = '14px Inter, sans-serif';
-    ctx.fillText('Immersive acoustic clarity with active noise cancellation.', x + 40, y + 145);
+    ctx.fillText(subheading, x + 40, y + 145);
 
     // CTA Buttons
     const btn1X = x + 40;
@@ -174,7 +197,7 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 13px Inter, sans-serif';
-    ctx.fillText('Shop Now →', btn1X + 32, btnY + 28);
+    ctx.fillText(ctaText, btn1X + 32, btnY + 28);
 
     const btn2X = btn1X + 165;
     ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
@@ -223,13 +246,17 @@ export class SemanticComponentRenderer {
   }
 
   // 3. ECOMMERCE PRODUCT CARD RENDERER
-  private renderProductCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderProductCard(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const label = node.metadata?.userLabel || 'Product Card';
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(244, 114, 182, 0.35)';
     const strokeWidth = node.strokeWidth || 1.5;
+
+    const realTitle = findByRole(children, 'product-card-title')?.text;
+    const realPrice = findByRole(children, 'product-card-price')?.text;
+    const realCta = findByRole(children, 'product-card-cta')?.text;
 
     ctx.save();
     // Card Background Container
@@ -262,7 +289,7 @@ export class SemanticComponentRenderer {
     // Product Title
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 13px Inter, sans-serif';
-    const titleSource = node.text || label;
+    const titleSource = realTitle || node.text || label;
     const title = titleSource.split('($')[0] || 'Premium Tech Accessory';
     ctx.fillText(title.slice(0, 32), x + 14, y + imgH + 32);
 
@@ -272,7 +299,7 @@ export class SemanticComponentRenderer {
     ctx.fillText('★★★★☆ 4.8 (124)', x + 14, y + imgH + 52);
 
     // Price Tag
-    const price = label.includes('($') ? `$${label.split('($')[1].replace(')', '')}` : '$149.99';
+    const price = realPrice || (label.includes('($') ? `$${label.split('($')[1].replace(')', '')}` : '$149.99');
     ctx.fillStyle = '#f472b6';
     ctx.font = 'bold 15px Inter, sans-serif';
     ctx.fillText(price, x + 14, y + imgH + 78);
@@ -287,7 +314,7 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 11px Inter, sans-serif';
-    ctx.fillText('+ Add to Cart', btnX + 16, btnY + 20);
+    ctx.fillText(`+ ${realCta || 'Add to Cart'}`, btnX + 16, btnY + 20);
 
     ctx.restore();
   }
@@ -323,12 +350,13 @@ export class SemanticComponentRenderer {
   }
 
   // 5. ANALYTICS CHART PANEL RENDERER
-  private renderChartPanel(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderChartPanel(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
     const strokeWidth = node.strokeWidth || 1.5;
+    const title = node.text || findByRole(children, 'chart-title')?.text || '📊 Revenue & Traffic Analytics';
 
     ctx.save();
     ctx.fillStyle = fill;
@@ -340,7 +368,7 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 15px Inter, sans-serif';
-    ctx.fillText(node.text || '📊 Revenue & Traffic Analytics', x + 20, y + 34);
+    ctx.fillText(title, x + 20, y + 34);
 
     // Draw Chart Curve / Bar Series
     const chartY = y + 70;
@@ -377,12 +405,13 @@ export class SemanticComponentRenderer {
   }
 
   // 6. AUTH FORM CARD RENDERER
-  private renderAuthFormCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderAuthFormCard(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#1e293b';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : '#38bdf8';
     const strokeWidth = node.strokeWidth || 2;
+    const title = node.text || findByRole(children, 'login-title')?.text || '⚡ Welcome Back';
 
     ctx.save();
     ctx.fillStyle = fill;
@@ -394,7 +423,7 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = stroke;
     ctx.font = 'bold 24px Inter, sans-serif';
-    ctx.fillText(node.text || '⚡ Welcome Back', x + 40, y + 55);
+    ctx.fillText(title, x + 40, y + 55);
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = '13px Inter, sans-serif';
@@ -449,10 +478,11 @@ export class SemanticComponentRenderer {
   }
 
   // 8. FEATURE CARD RENDERER
-  private renderFeatureCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderFeatureCard(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
-    const label = node.text || node.metadata?.userLabel || 'Feature Card';
+    const label = findByRole(children, 'feature-title')?.text || node.text || node.metadata?.userLabel || 'Feature Card';
+    const description = findByRole(children, 'feature-description')?.text || 'Automated UI vector recognition and design synthesis.';
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#1e293b';
     const stroke = node.stroke && node.stroke !== 'transparent' ? node.stroke : 'rgba(255, 255, 255, 0.1)';
     const strokeWidth = node.strokeWidth || 1;
@@ -475,13 +505,13 @@ export class SemanticComponentRenderer {
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = '12px Inter, sans-serif';
-    ctx.fillText('Automated UI vector recognition and design synthesis.', x + 20, y + 100);
+    ctx.fillText(description, x + 20, y + 100);
 
     ctx.restore();
   }
 
   // 9. SIDEBAR NAVIGATION RENDERER
-  private renderSidebarNav(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+  private renderSidebarNav(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[]): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
     const fill = node.fill && node.fill !== 'transparent' ? node.fill : '#0f172a';
@@ -500,7 +530,8 @@ export class SemanticComponentRenderer {
     ctx.font = 'bold 16px Inter, sans-serif';
     ctx.fillText(node.text || '⚡ APP WORKSPACE', x + 20, y + 45);
 
-    const items = ['📊 Dashboard', '🎨 UI Builder', '🖼️ Templates', '📊 Analytics', '⚙️ Settings'];
+    const realItems = findAllByRole(children, 'sidebar-item').map((c) => c.text).filter((t): t is string => !!t);
+    const items = realItems.length > 0 ? realItems : ['📊 Dashboard', '🎨 UI Builder', '🖼️ Templates', '📊 Analytics', '⚙️ Settings'];
     items.forEach((item, idx) => {
       const itemY = y + 90 + idx * 45;
       if (idx === 0) {

@@ -9,7 +9,7 @@ in this directory is the opposite: real RICO dataset input, a real
 scikit-learn model, a real grouped train/test split, and results reported
 with their limitations intact rather than smoothed over.
 
-Status: 4 planned models, 1 attempted so far. Being done session-by-session
+Status: 4 planned models, 2 attempted so far. Being done session-by-session
 per explicit user direction — this is not meant to look "finished."
 
 ## Model 1 of 4: Layout-type prediction — PARTIAL, documented below
@@ -94,6 +94,78 @@ To reproduce: extract a random sample of `combined/<id>.json` files from
 that archive into a `rico_raw/combined/` (or similarly named) directory and
 run `python3 rico_layout_baseline.py <path-to-that-directory>`.
 
-## Models 2–4 (component recommendation, visual style, UI understanding)
+## Model 2 of 4: Component recommendation — PARTIAL, documented below
+
+**Script:** `rico_component_recommendation.py`
+**Data:** same 20,000-screen real RICO sample used for model 1.
+
+### What it does
+
+Real task: given an empty slot in a real layout — its parent, position among
+siblings, size/shape, and ancestor context — predict which category of
+widget belongs there. This mirrors the actual product use case (recommend a
+component *before* its content exists), which matters because it's what
+keeps this task from being trivial or tautological.
+
+1. Labels come from RICO's real `class` field (actual Android widget class
+   names from real rendered apps), collapsed into 9 buckets by deterministic
+   string matching (`text`, `image`, `button`, `icon_button`, `input`,
+   `toggle`, `container`, `scroll_container`, `other`). This is real ground
+   truth, not a derived heuristic — stronger footing than model 1, which had
+   to fall back to weak/proxy labels because RICO has no layout-type field.
+2. Features deliberately **exclude the node's own text, clickable state, and
+   content-desc** — a recommender doesn't know the content of a slot it
+   hasn't filled yet, and including those would make the task near-trivial
+   (e.g. "has text" → almost certainly a TextView). Features used: parent
+   and grandparent widget-bucket, size/position ratios relative to the
+   parent, tree depth, sibling index/count, and parent's
+   clickable/scrollable flags.
+3. Split grouped by real Android package name, same leakage-avoidance
+   approach as model 1.
+
+### Real run — 20,000 screens
+
+```
+Total node samples: 957,595
+Label distribution: container 401,613 / other 183,499 / text 182,440 /
+  image 110,158 / button 24,787 / scroll_container 22,904 /
+  icon_button 19,111 / toggle 7,562 / input 5,521
+Distinct apps (groups): 6,695
+Train: 770,529 samples / 5,356 apps — Test: 187,066 samples / 1,339 apps
+App overlap between train/test: 0
+
+Accuracy: 0.5247
+                  precision  recall  f1-score  support
+          button       0.22    0.54      0.31     4873
+       container       0.89    0.41      0.56    78672
+     icon_button       0.32    0.63      0.42     3543
+           image       0.52    0.66      0.58    21313
+           input       0.04    0.73      0.07     1030
+           other       0.76    0.54      0.63    36087
+scroll_container       0.17    0.83      0.28     4380
+            text       0.65    0.62      0.64    35519
+          toggle       0.21    0.48      0.29     1649
+macro avg F1: 0.42   weighted avg F1: 0.57
+
+Majority-class baseline ('container' always): 0.4206
+```
+
+**Honest read:** 52.47% vs. a 42.06% majority baseline is a real,
+above-baseline lift on a genuinely hard 9-class task — recommending a
+component type from layout structure alone, with no shortcut through the
+node's own content, is not an easy problem, and the model does show real
+signal (macro recall 0.61 across classes). But it is not a strong or
+production-ready result: `class_weight="balanced"` pulled recall up for rare
+classes at a real precision cost — `input` in particular has 0.73 recall but
+only 0.04 precision, meaning the model over-predicts "input" far more than
+is correct, and its 5,521-sample share (0.6% of all nodes) is genuinely thin
+for a 9-way task with 957K total samples. This is a first honest pass, not a
+finished model.
+
+**Not done:** not wired into `MLPredictionEngine`. No hyperparameter tuning
+or feature-importance analysis has been done — the 52% ceiling has not been
+probed to see if it moves with more features or more data.
+
+## Models 3–4 (visual style, UI understanding)
 
 Not started yet.

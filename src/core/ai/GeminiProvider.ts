@@ -29,7 +29,7 @@ export class GeminiProvider implements AIProvider {
       name: this.name,
       type: 'gemini',
       apiKey: apiKey ?? envApiKey ?? undefined,
-      modelName: 'gemini-1.5-flash',
+      modelName: 'gemini-flash-latest',
       capabilities: this.capabilities
     };
   }
@@ -81,7 +81,7 @@ export class GeminiProvider implements AIProvider {
           status: 'success'
         };
       } catch (err: any) {
-        // Fallthrough to simulated robust output if net fails or rate limited
+        console.log(`[GeminiProvider] Real API call failed, falling back to simulated response — requestId=${requestId}: ${err?.message ?? err}`);
       }
     }
 
@@ -117,7 +117,8 @@ export class GeminiProvider implements AIProvider {
     const promptTokens = Math.floor(prompt.formattedPrompt.length / 4);
     const completionTokens = Math.floor(JSON.stringify(geminiJsonResponse).length / 4);
 
-    console.log(`[GeminiProvider] SIMULATED response (no API key configured) — requestId=${requestId}`);
+    const reason = this.config.apiKey ? 'real API call failed, see previous log line' : 'no API key configured';
+    console.log(`[GeminiProvider] SIMULATED response (${reason}) — requestId=${requestId}`);
 
     return {
       requestId,

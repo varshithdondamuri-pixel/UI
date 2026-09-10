@@ -404,7 +404,17 @@ export const UIIntelligenceProductUI: React.FC<UIIntelligenceProductUIProps> = (
       );
       return;
     }
-    // planning_failed (or no cached spec) — nothing meaningful to skip, start over.
+    // planning_failed (or no cached spec) — nothing meaningful to skip, start
+    // over with the ORIGINAL failed request's input, not handleGenerateClick's
+    // promptText/canGenerate guard: that guard checks the textbox, which is
+    // empty for the initial auto-generated page (its prompt is a hardcoded
+    // string, never written into promptText state), so Retry on that one
+    // would silently no-op instead of restarting anything.
+    if (generation.source === 'prompt' && generation.input) {
+      const input = generation.input;
+      startGeneration('prompt', input, (id) => runPromptGeneration(id, input), true);
+      return;
+    }
     handleGenerateClick();
   };
 

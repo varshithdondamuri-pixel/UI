@@ -207,9 +207,21 @@ export const UIIntelligenceProductUI: React.FC<UIIntelligenceProductUIProps> = (
     // accurate stand-in; prefer the real element on a retry, where the
     // canvas view is already showing.
     const canvasEl = document.querySelector('.canvas-element');
-    const containerSize = canvasEl
+    const rawSize = canvasEl
       ? { width: canvasEl.clientWidth, height: canvasEl.clientHeight }
       : { width: window.innerWidth, height: window.innerHeight };
+    // The property inspector is a permanent `position: absolute` overlay
+    // (right: 20px, width: 280px — see .inspector-panel in main.css), not a
+    // layout element the canvas shrinks around, so fitToScreen's own
+    // centering has no way to know it exists. Centering into the raw canvas
+    // width regularly puts freshly generated content's right portion
+    // directly underneath it. Subtracting its reserved width here fits
+    // content into the actually-visible region instead.
+    const INSPECTOR_PANEL_RESERVED_WIDTH = 300; // 280px width + 20px right margin
+    const containerSize = {
+      width: Math.max(200, rawSize.width - INSPECTOR_PANEL_RESERVED_WIDTH),
+      height: rawSize.height
+    };
     viewportEngine.fitToScreen(bounds, containerSize);
   };
 

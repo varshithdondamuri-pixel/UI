@@ -1,0 +1,40 @@
+{
+  "screen_type": [
+    {
+      "file": "10020.jpg",
+      "screen_type": "media_player",
+      "confidence": "high"
+    },
+    {
+      "file": "10027.jpg",
+      "screen_type": "dashboard",
+      "confidence": "high"
+    },
+    {
+      "file": "10036.jpg",
+      "screen_type": "settings",
+      "confidence": "high"
+    },
+    {
+      "file": "10087.jpg",
+      "screen_type": "other",
+      "confidence": "high"
+    },
+    {
+      "file": "10098.jpg",
+      "screen_type": "other",
+      "confidence": "high"
+    },
+    {
+      "file": "1010.jpg",
+      "screen_type": "settings",
+      "confidence": "high"
+    },
+    {
+      "file": "10110.jpg",
+      "screen_type": "other",
+      "confidence": "high"
+    }
+  ],
+  "visual_style": []
+}

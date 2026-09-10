@@ -9,8 +9,11 @@ in this directory is the opposite: real RICO dataset input, a real
 scikit-learn model, a real grouped train/test split, and results reported
 with their limitations intact rather than smoothed over.
 
-Status: 4 planned models, 3 attempted so far. Being done session-by-session
-per explicit user direction — this is not meant to look "finished."
+Status: all 4 planned models have a first real, honestly-reported attempt.
+None are production-ready; several have real, disclosed weaknesses. A
+real attempt to involve Gemini (Google's LLM) to improve accuracy hit a
+hard free-tier quota wall — documented in its own section below rather than
+faked around.
 
 ## Model 1 of 4: Layout-type prediction — PARTIAL, documented below
 
@@ -224,6 +227,92 @@ genuinely hard problem, not a working style classifier.
 only hand-computed pixel statistics. Not wired into `MLPredictionEngine`.
 Larger image sample (more than 4,000) not yet attempted.
 
-## Model 4 (UI understanding)
+## Model 4 of 4: UI understanding — PARTIAL, real negative-leaning result
 
-Not started yet.
+**Script:** `rico_ui_understanding.py`
+**Data:** same 4,000 real RICO screenshots used for model 3.
+
+### What it does
+
+Real task: "does this screen require text input?" — predict, from
+screenshot pixels alone (no accessibility tree), whether a screen contains
+at least one real text-input field (EditText/search box/etc). This is the
+inverse direction from model 2 (structure → widget type): here it's
+pixels → a real structural fact about the screen, which is a genuine visual
+"understanding" task.
+
+1. Label: **real ground truth**, not a heuristic — derived from RICO's own
+   `class` field via the same deterministic bucketing used in model 2,
+   checking whether any node in the real tree buckets to `input`.
+2. Features: pixel statistics from the real JPG (RGB mean/std, HSV
+   saturation/brightness, edge density, a bottom-third-of-screen
+   edge/contrast stat since keyboards and input bars tend to sit low on
+   real mobile screens, plus a coarse color histogram). No accessibility
+   tree access — genuinely vision-only.
+3. Split grouped by package name, consistent with models 1–3.
+
+### Real run — 4,000 screenshots
+
+```
+Label distribution: has_input 815 / no_input 3185
+Train: 3,247 samples / 2,188 apps — Test: 753 samples / 548 apps
+App overlap between train/test: 0
+
+Accuracy: 0.7437
+Majority-class baseline ('no_input' always): 0.7463   <- model is BELOW baseline
+ROC-AUC: 0.5943                                        <- but real, non-random ranking signal exists
+has_input: precision 0.47, recall 0.09 (18/191 correctly caught)
+```
+
+**Honest read — this is the weakest of the 4 models, reported as such:**
+at the default classification threshold, accuracy (74.37%) is actually
+*worse* than always predicting "no input" (74.63%), because ~80% of real
+screens have no input field and the classifier misses most of the 20% that
+do (recall 0.09). This is a real negative result on the accuracy metric, not
+hidden or reframed. It is not, however, a total null: ROC-AUC of 0.594 (vs.
+0.5 = random) shows the model has captured some genuine ranking signal —
+edge-density and bottom-of-screen contrast features (consistent with
+input-box borders and on-screen keyboards) were its most-used features —
+just not enough to win on raw accuracy against a skewed 80/20 baseline.
+Detecting a small, low-contrast input box from downsampled 128×228 pixel
+statistics alone is a genuinely hard vision problem; a real fix would need
+either a learned image model (CNN) rather than hand-computed pixel stats,
+or oversampling/threshold-tuning aimed at recall rather than accuracy.
+
+**Not done:** no threshold tuning or CNN attempt. Not wired into
+`MLPredictionEngine`.
+
+## Attempt to involve Gemini (Google's LLM) — hit a real quota wall, documented not faked
+
+Scripts: `gemini_client.py` (minimal REST client, reads the key from the
+project's `.env`, never echoes it), `gemini_poc.py` (the actual run),
+`gemini_poc_results.json` (real saved output).
+
+**Intent:** use Gemini's vision capability for two things the geometric/
+structural approaches above can't do well — (1) genuine semantic screen-type
+labels for a UI-understanding-style task, and (2) richer visual-style
+descriptors to feed into model 3 as extra features.
+
+**What actually happened:** the configured Gemini API key is on Google's
+**free tier**, hard-capped at a small number of `generateContent` requests
+per day per model (confirmed via a real `429 RESOURCE_EXHAUSTED` response
+with `quotaId=GenerateRequestsPerDayPerProjectPerModel-FreeTier`,
+`quotaValue=20`). In practice, once retries on transient `503`s are counted,
+the usable daily budget was closer to ~7-8 successful calls before the quota
+tripped. That is several orders of magnitude too small to label real
+training data (models above use hundreds to hundreds of thousands of
+samples).
+
+**What was actually run:** a small, explicitly-scoped proof-of-concept — 7
+real screenshots successfully classified by Gemini for screen type (see
+`gemini_poc_results.json` for the real raw output, e.g.
+`{"file": "10020.jpg", "screen_type": "media_player", "confidence": "high"}`),
+proving the integration genuinely works end-to-end. The paired visual-style
+demo (Demo B) got 0 completions before the quota cut it off.
+
+**Honest conclusion:** Gemini did NOT improve any of the 4 models' measured
+accuracy — there was never enough quota to generate training-scale labels.
+The mechanism is proven real and working on real data; scaling it up needs
+either paid billing on this API key (a decision only the account owner can
+make) or a much smaller, differently-scoped task. This is reported as a
+blocked/partial result rather than an invented accuracy improvement.

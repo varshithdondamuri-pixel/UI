@@ -235,7 +235,19 @@ export class CanvasRenderer {
       }
       case 'text': {
         ctx.font = '16px Inter, sans-serif';
-        ctx.fillStyle = node.stroke || '#ffffff';
+        // Two node-creation paths disagree on which property holds the
+        // visible color: AI-generated text (SectionBuilders.ts) puts it in
+        // `fill` and sets `stroke: 'transparent'`; the manual Text tool
+        // (TextTool.ts) does the opposite (`fill: 'transparent'`, color in
+        // `stroke`). Prefer whichever one is an actual non-transparent
+        // color so both paths render correctly.
+        if (node.fill && node.fill !== 'transparent') {
+          ctx.fillStyle = node.fill;
+        } else if (node.stroke && node.stroke !== 'transparent') {
+          ctx.fillStyle = node.stroke;
+        } else {
+          ctx.fillStyle = '#ffffff';
+        }
         ctx.textBaseline = 'top';
         ctx.fillText(node.text || 'Text', node.position.x, node.position.y);
         break;

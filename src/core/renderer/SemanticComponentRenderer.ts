@@ -11,6 +11,30 @@ function findAllByRole(children: CanvasNode[], role: string, kind?: CanvasNode['
   return children.filter((c) => c.metadata?.semanticLabel === role && (!kind || c.kind === kind));
 }
 
+/**
+ * Roles that are themselves a rect-kind CHILD of one of the container roles
+ * dispatched below (e.g. `hero-media` inside a `hero`, `login-field` inside
+ * a `login-form`), sharing the parent's keyword as a hyphenated prefix.
+ * Without this, the substring checks below would ALSO match these children
+ * and re-render each of them as a duplicate/nested copy of their own
+ * parent's card — the child card is small, so the collision shows up as
+ * duplicated title/content text stamped across each child's small bounds
+ * (e.g. a login form's Email/Password/Sign-In rects each drawing their own
+ * "Welcome Back" auth card). This exclusion only covers the hyphenated
+ * roles SectionBuilders.ts actually emits; it deliberately does not touch
+ * the substring matching itself, which UICompositionEngine.ts's natural-
+ * language labels (e.g. "Top Header", "Navbar Container") still rely on.
+ */
+const CONTAINER_CHILD_ROLES = new Set([
+  'hero-content',
+  'hero-cta',
+  'hero-media',
+  'login-field',
+  'login-button',
+  'data-table-header',
+  'product-card-image'
+]);
+
 export class SemanticComponentRenderer {
   /**
    * Main entry point to render a CanvasNode as a rich, realistic semantic UI component.
@@ -20,6 +44,16 @@ export class SemanticComponentRenderer {
    */
   public renderSemanticNode(ctx: CanvasRenderingContext2D, node: CanvasNode, children: CanvasNode[] = []): boolean {
     const role = (node.metadata?.semanticLabel || node.metadata?.userLabel || '').toLowerCase();
+
+    if (CONTAINER_CHILD_ROLES.has(role)) {
+      // Plain box, no label: these nodes are structural wrappers around a
+      // real text child (e.g. an "Email Address" label inside a login
+      // field) that renders itself independently. Reusing the generic
+      // card's humanized-role label here ("Login Field") would draw
+      // placeholder text overlapping or in place of that real content.
+      this.renderPlainBox(ctx, node);
+      return true;
+    }
 
     if (role.includes('navbar') || role.includes('header')) {
       this.renderNavbar(ctx, node, children);
@@ -548,6 +582,21 @@ export class SemanticComponentRenderer {
   }
 
   // 10. GENERIC STYLED CARD FALLBACK
+  /** Box + border only, no label — for structural wrapper nodes whose real content is a separate child node rendered independently. */
+  private renderPlainBox(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
+    const { x, y } = node.position;
+    const { width, height } = node.size;
+
+    ctx.save();
+    ctx.fillStyle = node.fill !== 'transparent' ? node.fill : '#1e293b';
+    ctx.strokeStyle = node.stroke || '#38bdf8';
+    ctx.lineWidth = node.strokeWidth || 1;
+    this.drawRoundedRect(ctx, x, y, width, height, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
   private renderGenericStyledCard(ctx: CanvasRenderingContext2D, node: CanvasNode): void {
     const { x, y } = node.position;
     const { width, height } = node.size;
